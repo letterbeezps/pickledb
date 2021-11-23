@@ -2,10 +2,10 @@ package db
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"sync"
 
+	"github.com/letterbeezps/pickledb/global"
 	pickleUitl "github.com/letterbeezps/pickledb/util"
 )
 
@@ -20,6 +20,24 @@ func NewPickleDb() *Pickledb {
 		data: make(map[string][]byte, 256),
 		lock: &sync.RWMutex{},
 	}
+}
+
+func LoadPickleDb() *Pickledb {
+
+	if _, err := os.Stat(global.StoreLocation); err != nil {
+		if os.IsNotExist(err) {
+			return NewPickleDb()
+		} else {
+			panic(err)
+		}
+	}
+
+	newdb, err := newEmptyDump().load(global.StoreLocation)
+	if err != nil {
+		return NewPickleDb()
+	}
+
+	return newdb
 }
 
 func (db *Pickledb) Get(key string) ([]byte, bool) {
@@ -40,16 +58,9 @@ func (db *Pickledb) Set(key string, value interface{}) {
 
 }
 
-func (db *Pickledb) Dump(location string) error {
+func (db *Pickledb) Dump() error {
 
-	dir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	newLocation := fmt.Sprintf("%s/%s", dir, location)
-
-	return db.dump(newLocation)
+	return db.dump(global.StoreLocation)
 }
 
 /****************************************************/

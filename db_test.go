@@ -10,7 +10,7 @@ import (
 
 // go test -v -run TestSetGet
 func TestSetGet(t *testing.T) {
-	testDB := Load()
+	testDB := Load("test.db")
 
 	testDB.Set("zp", "zp_value")
 
@@ -23,15 +23,15 @@ func TestSetGet(t *testing.T) {
 	fmt.Println(string(value))
 }
 
-// go test -v -run TestSetGetJson
+// go test -v -run TestJson
 
 type testJson struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
 
-func TestSetGetJson(t *testing.T) {
-	testDB := Load()
+func TestJson(t *testing.T) {
+	testDB := Load("test.db")
 
 	fakeJson := testJson{
 		Name: "zp",
@@ -39,6 +39,7 @@ func TestSetGetJson(t *testing.T) {
 	}
 
 	testDB.Set("zp", fakeJson)
+	testDB.Set("zz", "zz_value")
 
 	value, ok := testDB.Get("zp")
 
@@ -46,18 +47,43 @@ func TestSetGetJson(t *testing.T) {
 
 	outJson := testJson{}
 
+	fmt.Println(string(value))
+
 	json.Unmarshal(value, &outJson)
 
 	fmt.Println(outJson)
+
+	testDB.Dump()
+
 }
 
 // go test -v -run TestDump
 func TestDump(t *testing.T) {
-	testDB := Load()
+	testDB := Load("test.db")
 
 	testDB.Set("zp", "zp_value")
 
 	testDB.Set("zz", "zz_value")
 
-	testDB.Dump("test.db")
+	testDB.Dump()
+}
+
+// go test -v -run TestLoad
+func TestLoad(t *testing.T) {
+	testDB := Load("test.db")
+
+	// testDB.Set("zp", "zp_value")
+
+	value, ok := testDB.Get("zp")
+
+	assert.Equal(t, ok, true)
+
+	outJson := testJson{}
+
+	fmt.Println(string(value))
+
+	json.Unmarshal(value, &outJson)
+
+	fmt.Println(outJson)
+
 }
