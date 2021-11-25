@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/letterbeezps/pickledb/global"
 	pickleUitl "github.com/letterbeezps/pickledb/util"
@@ -61,6 +62,19 @@ func (db *Pickledb) Set(key string, value interface{}) {
 func (db *Pickledb) Dump() error {
 
 	return db.dump(global.StoreLocation)
+}
+
+// Think before you act when use this function
+func (db *Pickledb) AutoDumpByTime() {
+	go func() {
+		ticker := time.NewTicker(time.Duration(global.DumpDuration) * time.Minute)
+		for {
+			select {
+			case <-ticker.C:
+				db.Dump()
+			}
+		}
+	}()
 }
 
 /****************************************************/
