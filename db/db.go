@@ -45,6 +45,10 @@ func (db *Pickledb) Get(key string) ([]byte, bool) {
 	return db.get(key)
 }
 
+func (db *Pickledb) GetAll() []string {
+	return db.getall()
+}
+
 func (db *Pickledb) Set(key string, value interface{}) {
 	if val, ok := value.(string); ok {
 		db.set(key, []byte(val))
@@ -84,6 +88,14 @@ func (db *Pickledb) get(key string) ([]byte, bool) {
 	defer db.lock.RUnlock()
 	value, ok := db.data[key]
 	return value, ok
+}
+
+func (db *Pickledb) getall() []string {
+	keys := make([]string, 0, len(db.data))
+	for k := range db.data {
+		keys = append(keys, k)
+	}
+	return keys
 }
 
 func (db *Pickledb) set(key string, value []byte) {

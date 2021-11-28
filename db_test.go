@@ -85,5 +85,17 @@ func TestLoad(t *testing.T) {
 	json.Unmarshal(value, &outJson)
 
 	fmt.Println(outJson)
+}
 
+// go test -v -run TestGetAll
+func TestGetAll(t *testing.T) {
+	testDB := Load("test1.db")
+
+	testDB.Set("zp", "zp_value")
+
+	testDB.Set("zz", "zz_value")
+
+	keys := testDB.GetAll()
+
+	fmt.Println(keys)
 }
