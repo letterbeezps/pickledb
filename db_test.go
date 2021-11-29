@@ -10,7 +10,7 @@ import (
 
 // go test -v -run TestSetGet
 func TestSetGet(t *testing.T) {
-	testDB := Load("test.db")
+	testDB := Load("test.db", false)
 
 	testDB.Set("zp", "zp_value")
 
@@ -31,7 +31,7 @@ type testJson struct {
 }
 
 func TestJson(t *testing.T) {
-	testDB := Load("test.db")
+	testDB := Load("test.db", false)
 
 	fakeJson := testJson{
 		Name: "zp",
@@ -59,7 +59,7 @@ func TestJson(t *testing.T) {
 
 // go test -v -run TestDump
 func TestDump(t *testing.T) {
-	testDB := Load("test.db")
+	testDB := Load("test.db", false)
 
 	testDB.Set("zp", "zp_value")
 
@@ -70,7 +70,7 @@ func TestDump(t *testing.T) {
 
 // go test -v -run TestLoad
 func TestLoad(t *testing.T) {
-	testDB := Load("test.db")
+	testDB := Load("test.db", false)
 
 	// testDB.Set("zp", "zp_value")
 
@@ -89,7 +89,7 @@ func TestLoad(t *testing.T) {
 
 // go test -v -run TestGetAll
 func TestGetAll(t *testing.T) {
-	testDB := Load("test1.db")
+	testDB := Load("test1.db", false)
 
 	testDB.Set("zp", "zp_value")
 
