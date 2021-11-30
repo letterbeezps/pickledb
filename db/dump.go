@@ -7,7 +7,7 @@ import (
 )
 
 type dumpData struct {
-	Data map[string][]byte
+	Data map[string]*value
 }
 
 func newEmptyDump() *dumpData {

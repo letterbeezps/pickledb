@@ -1,6 +1,7 @@
 package pickledb
 
 import (
+	"encoding/gob"
 	"fmt"
 	"os"
 
@@ -16,6 +17,8 @@ func Load(location string, autoDump bool) *db.Pickledb {
 
 	global.StoreLocation = fmt.Sprintf("%s/%s", dir, location)
 	global.AutoDump = autoDump
+
+	gob.Register([]interface{}{})
 
 	newDB := db.LoadPickleDb()
 

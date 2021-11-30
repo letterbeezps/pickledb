@@ -1,24 +1,23 @@
 package db
 
 import (
-	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 	"time"
 
 	"github.com/letterbeezps/pickledb/global"
-	pickleUitl "github.com/letterbeezps/pickledb/util"
 )
 
 type Pickledb struct {
-	data map[string][]byte
+	data map[string]*value
 
 	lock *sync.RWMutex
 }
 
 func NewPickleDb() *Pickledb {
 	return &Pickledb{
-		data: make(map[string][]byte, 256),
+		data: make(map[string]*value, 256),
 		lock: &sync.RWMutex{},
 	}
 }
@@ -35,37 +34,59 @@ func LoadPickleDb() *Pickledb {
 
 	newdb, err := newEmptyDump().load(global.StoreLocation)
 	if err != nil {
-		return NewPickleDb()
+		// return NewPickleDb()
+		panic(err)
 	}
 
 	return newdb
 }
 
-func (db *Pickledb) Get(key string) ([]byte, bool) {
-	return db.get(key)
+func (db *Pickledb) Get(key string) (interface{}, bool) {
+	value, ok := db.get(key)
+
+	return value.Data, ok
 }
 
 func (db *Pickledb) GetAll() []string {
 	return db.getall()
 }
 
-func (db *Pickledb) Set(key string, value interface{}) {
-	if val, ok := value.(string); ok {
-		db.set(key, []byte(val))
-	} else {
-		val, err := json.Marshal(value)
-		if err != nil {
-			panic(err)
-		}
-
-		db.set(key, val)
-	}
+func (db *Pickledb) Set(key string, v interface{}) {
+	val := newValue(v, "N")
+	db.set(key, val)
 
 }
 
-func (db *Pickledb) Dump() error {
+func (db *Pickledb) ListCreate(key string) bool {
+	val := newValue([]interface{}{}, "L")
+	db.set(key, val)
 
-	return db.dump(global.StoreLocation)
+	return true
+}
+
+func (db *Pickledb) ListAdd(key string, v interface{}) {
+	value, ok := db.get(key)
+
+	if !ok {
+		fmt.Printf("%s not exist", key)
+		return
+	}
+	oldList := value.Data
+	list := oldList.([]interface{})
+
+	list = append(list, v)
+
+	value.Data = list
+
+	db.set(key, value)
+
+}
+
+func (db *Pickledb) Dump() {
+
+	if err := db.dump(global.StoreLocation); err != nil {
+		panic(err)
+	}
 }
 
 // Think before you act when use this function
@@ -83,7 +104,7 @@ func (db *Pickledb) AutoDumpByTime() {
 
 /****************************************************/
 
-func (db *Pickledb) get(key string) ([]byte, bool) {
+func (db *Pickledb) get(key string) (*value, bool) {
 	db.lock.RLock()
 	defer db.lock.RUnlock()
 	value, ok := db.data[key]
@@ -98,10 +119,10 @@ func (db *Pickledb) getall() []string {
 	return keys
 }
 
-func (db *Pickledb) set(key string, value []byte) {
+func (db *Pickledb) set(key string, value *value) {
 	db.lock.Lock()
 	defer db.lock.Unlock()
-	db.data[key] = pickleUitl.Copy(value)
+	db.data[key] = value
 }
 
 func (db *Pickledb) dump(location string) error {

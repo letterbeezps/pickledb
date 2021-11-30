@@ -1,7 +1,6 @@
 package pickledb
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -18,43 +17,9 @@ func TestSetGet(t *testing.T) {
 
 	assert.Equal(t, ok, true)
 
-	assert.Equal(t, string(value), "zp_value")
+	assert.Equal(t, value, "zp_value")
 
-	fmt.Println(string(value))
-}
-
-// go test -v -run TestJson
-
-type testJson struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
-
-func TestJson(t *testing.T) {
-	testDB := Load("test.db", false)
-
-	fakeJson := testJson{
-		Name: "zp",
-		Age:  24,
-	}
-
-	testDB.Set("zp", fakeJson)
-	testDB.Set("zz", "zz_value")
-
-	value, ok := testDB.Get("zp")
-
-	assert.Equal(t, ok, true)
-
-	outJson := testJson{}
-
-	fmt.Println(string(value))
-
-	json.Unmarshal(value, &outJson)
-
-	fmt.Println(outJson)
-
-	testDB.Dump()
-
+	fmt.Println(value)
 }
 
 // go test -v -run TestDump
@@ -78,18 +43,12 @@ func TestLoad(t *testing.T) {
 
 	assert.Equal(t, ok, true)
 
-	outJson := testJson{}
-
-	fmt.Println(string(value))
-
-	json.Unmarshal(value, &outJson)
-
-	fmt.Println(outJson)
+	assert.Equal(t, value, "zp_value")
 }
 
 // go test -v -run TestGetAll
 func TestGetAll(t *testing.T) {
-	testDB := Load("test1.db", false)
+	testDB := Load("test.db", false)
 
 	testDB.Set("zp", "zp_value")
 
@@ -98,4 +57,46 @@ func TestGetAll(t *testing.T) {
 	keys := testDB.GetAll()
 
 	fmt.Println(keys)
+}
+
+//
+
+// go test -v -run TestListValue
+func TestListValue(t *testing.T) {
+	testDB := Load("testList.db", false)
+
+	testDB.ListCreate("zpList")
+
+	l1, ok := testDB.Get("zpList")
+
+	assert.Equal(t, ok, true)
+
+	fmt.Println(l1)
+
+	testDB.ListAdd("zpList", "zp")
+	testDB.ListAdd("zpList", "zp1")
+	testDB.ListAdd("zpList", "zp2")
+
+	l2, ok := testDB.Get("zpList")
+
+	assert.Equal(t, ok, true)
+
+	fmt.Println(l2)
+
+	fmt.Println(testDB)
+
+	testDB.Dump()
+}
+
+// go test -v -run TestListLoad
+func TestListLoad(t *testing.T) {
+	testDB := Load("testList.db", false)
+
+	l2, ok := testDB.Get("zpList")
+
+	assert.Equal(t, ok, true)
+
+	fmt.Println(l2)
+
+	fmt.Println(testDB)
 }
