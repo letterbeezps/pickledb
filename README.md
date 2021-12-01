@@ -8,18 +8,31 @@ A lightweight and simple key-value store written in Go, inspired by [Python's Pi
 package main
 
 import (
- "github.com/letterbeezps/pickledb"
+    "fmt"
+
+    "github.com/letterbeezps/pickledb"
 )
 
 func main() {
- db := pickledb.Load("test.db")
+    Dump()
 
- db.Set("letter", "letter_value")
- err := db.Dump()
- if err != nil {
-  panic(err)
- }
+    Load()
 }
+
+func Dump() {
+    db := pickledb.Load("test.db", false)
+
+    db.Set("letter", "letter_value")
+    db.Dump()
+}
+
+func Load() {
+    db := pickledb.Load("test.db", false)
+
+    v, _ := db.Get("letter")
+    fmt.Println(v)
+}
+
 ```
 
 ```shell
