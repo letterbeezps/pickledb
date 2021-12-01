@@ -65,6 +65,7 @@ func TestGetAll(t *testing.T) {
 func TestListValue(t *testing.T) {
 	testDB := Load("testList.db", false)
 
+	// test step 1
 	testDB.ListCreate("zpList")
 
 	l1, ok := testDB.Get("zpList")
@@ -73,6 +74,7 @@ func TestListValue(t *testing.T) {
 
 	fmt.Println(l1)
 
+	// test step 2
 	testDB.ListAdd("zpList", "zp")
 	testDB.ListAdd("zpList", "zp1")
 	testDB.ListAdd("zpList", "zp2")
@@ -82,6 +84,20 @@ func TestListValue(t *testing.T) {
 	assert.Equal(t, ok, true)
 
 	fmt.Println(l2)
+
+	fmt.Println(testDB)
+
+	// test step 3
+
+	arrs := []string{"zl1", "zl2", "zl3"}
+
+	testDB.ListExpend("zpList", arrs)
+
+	l3, ok := testDB.Get("zpList")
+
+	assert.Equal(t, ok, true)
+
+	fmt.Println(l3)
 
 	fmt.Println(testDB)
 

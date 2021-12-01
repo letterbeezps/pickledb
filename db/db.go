@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/letterbeezps/pickledb/global"
+	"github.com/letterbeezps/pickledb/util"
 )
 
 type Pickledb struct {
@@ -73,13 +74,29 @@ func (db *Pickledb) ListAdd(key string, v interface{}) {
 	}
 	oldList := value.Data
 	list := oldList.([]interface{})
-
 	list = append(list, v)
+	value.Data = list
+	db.set(key, value)
 
+}
+
+func (db *Pickledb) ListExpend(key string, v interface{}) {
+	value, ok := db.get(key)
+
+	if !ok {
+		fmt.Printf("%s not exist", key)
+		return
+	}
+	oldList := value.Data
+	list := oldList.([]interface{})
+
+	convertV := util.Convert(v)
+	vList := convertV.([]interface{})
+
+	list = append(list, vList...)
 	value.Data = list
 
 	db.set(key, value)
-
 }
 
 func (db *Pickledb) Dump() {

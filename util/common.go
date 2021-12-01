@@ -1,6 +1,9 @@
 package util
 
-import "reflect"
+import (
+	"encoding/json"
+	"reflect"
+)
 
 func Copy(src []byte) []byte {
 	dst := make([]byte, len(src))
@@ -8,6 +11,18 @@ func Copy(src []byte) []byte {
 	return dst
 }
 
-func typeof(v interface{}) string {
+func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
+}
+
+func Convert(v interface{}) interface{} {
+	byteV, _ := json.Marshal(v)
+
+	var ret interface{}
+
+	if err := json.Unmarshal(byteV, &ret); err != nil {
+		panic(err)
+	}
+
+	return ret
 }
