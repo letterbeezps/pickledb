@@ -22,6 +22,27 @@ func TestSetGet(t *testing.T) {
 	fmt.Println(value)
 }
 
+// go test -v -run TestRem
+func TestRem(t *testing.T) {
+	testDB := Load("test.db", false)
+
+	testDB.Set("zp", "zp_value")
+
+	value, ok := testDB.Get("zp")
+
+	assert.Equal(t, ok, true)
+
+	assert.Equal(t, value, "zp_value")
+
+	testDB.Rem("zp")
+
+	_, ok = testDB.Get("zp")
+
+	assert.Equal(t, ok, false)
+
+	fmt.Println(value)
+}
+
 // go test -v -run TestDump
 func TestDump(t *testing.T) {
 	testDB := Load("test.db", false)

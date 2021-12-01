@@ -44,7 +44,9 @@ func LoadPickleDb() *Pickledb {
 
 func (db *Pickledb) Get(key string) (interface{}, bool) {
 	value, ok := db.get(key)
-
+	if !ok {
+		return nil, ok
+	}
 	return value.Data, ok
 }
 
@@ -56,6 +58,12 @@ func (db *Pickledb) Set(key string, v interface{}) {
 	val := newValue(v, "N")
 	db.set(key, val)
 
+}
+
+func (db *Pickledb) Rem(key string) {
+	if _, ok := db.get(key); ok {
+		db.del(key)
+	}
 }
 
 func (db *Pickledb) ListCreate(key string) bool {
@@ -140,6 +148,13 @@ func (db *Pickledb) set(key string, value *value) {
 	db.lock.Lock()
 	defer db.lock.Unlock()
 	db.data[key] = value
+}
+
+func (db *Pickledb) del(key string) {
+	db.lock.Lock()
+	defer db.lock.Unlock()
+
+	delete(db.data, key)
 }
 
 func (db *Pickledb) dump(location string) error {
