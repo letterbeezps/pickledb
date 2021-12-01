@@ -4,8 +4,15 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/letterbeezps/pickledb/util"
 	"github.com/stretchr/testify/assert"
 )
+
+type testJson struct {
+	Name    string
+	Age     int
+	Friends []string
+}
 
 // go test -v -run TestSetGet
 func TestSetGet(t *testing.T) {
@@ -20,6 +27,18 @@ func TestSetGet(t *testing.T) {
 	assert.Equal(t, value, "zp_value")
 
 	fmt.Println(value)
+
+	fakeJson := testJson{
+		Name:    "zp",
+		Age:     24,
+		Friends: []string{"z1", "z2", "z3"},
+	}
+
+	fakeValue := util.Convert(fakeJson)
+
+	testDB.Set("fakeZp", fakeValue)
+
+	fmt.Println(fakeValue)
 }
 
 // go test -v -run TestRem
@@ -51,6 +70,16 @@ func TestDump(t *testing.T) {
 
 	testDB.Set("zz", "zz_value")
 
+	fakeJson := testJson{
+		Name:    "zp",
+		Age:     24,
+		Friends: []string{"z1", "z2", "z3"},
+	}
+
+	fakeValue := util.Convert(fakeJson)
+
+	testDB.Set("fakeZp", fakeValue)
+
 	testDB.Dump()
 }
 
@@ -65,6 +94,12 @@ func TestLoad(t *testing.T) {
 	assert.Equal(t, ok, true)
 
 	assert.Equal(t, value, "zp_value")
+
+	fakeValue, ok := testDB.Get("fakeZp")
+
+	assert.Equal(t, ok, true)
+
+	fmt.Println(fakeValue)
 }
 
 // go test -v -run TestGetAll

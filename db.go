@@ -19,6 +19,7 @@ func Load(location string, autoDump bool) *db.Pickledb {
 	global.AutoDump = autoDump
 
 	gob.Register([]interface{}{})
+	gob.Register(map[string]interface{}{})
 
 	newDB := db.LoadPickleDb()
 

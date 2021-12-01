@@ -55,7 +55,8 @@ func (db *Pickledb) GetAll() []string {
 }
 
 func (db *Pickledb) Set(key string, v interface{}) {
-	val := newValue(v, "N")
+	convertValue := util.Convert(v)
+	val := newValue(convertValue, "N")
 	db.set(key, val)
 
 }
@@ -82,7 +83,8 @@ func (db *Pickledb) ListAdd(key string, v interface{}) {
 	}
 	oldList := value.Data
 	list := oldList.([]interface{})
-	list = append(list, v)
+	convertValue := util.Convert(v)
+	list = append(list, convertValue)
 	value.Data = list
 	db.set(key, value)
 
