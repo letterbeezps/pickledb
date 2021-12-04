@@ -2,6 +2,8 @@
 
 A lightweight and simple key-value store written in Go, inspired by [Python's PickleDB](https://github.com/patx/pickledb) and [PickleDB-rs](https://github.com/seladb/pickledb-rs).
 
+When I used go to refactor the python project of my former colleague, I tried to find an alternative to [pickleDB](https://github.com/patx/pickledb) in [go.dev](https://pkg.go.dev/), but it failed. Fortunately, the source code of [pickleDB](https://github.com/patx/pickledb) is not complicated, so I try to develop a pickleDB-go by myself.
+
 ## exmaple
 
 ```go
