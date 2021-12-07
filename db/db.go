@@ -67,6 +67,9 @@ func (db *Pickledb) Rem(key string) {
 	}
 }
 
+// list operation
+
+// create a list
 func (db *Pickledb) ListCreate(key string) bool {
 	val := newValue([]interface{}{}, "L")
 	db.set(key, val)
@@ -74,6 +77,7 @@ func (db *Pickledb) ListCreate(key string) bool {
 	return true
 }
 
+// add a value to list
 func (db *Pickledb) ListAdd(key string, v interface{}) {
 	value, ok := db.get(key)
 
@@ -90,7 +94,8 @@ func (db *Pickledb) ListAdd(key string, v interface{}) {
 
 }
 
-func (db *Pickledb) ListExpend(key string, v interface{}) {
+// extend a list with a array
+func (db *Pickledb) ListExtend(key string, v interface{}) {
 	value, ok := db.get(key)
 
 	if !ok {
@@ -109,11 +114,42 @@ func (db *Pickledb) ListExpend(key string, v interface{}) {
 	db.set(key, value)
 }
 
+// dump operation
 func (db *Pickledb) Dump() {
 
 	if err := db.dump(global.StoreLocation); err != nil {
 		panic(err)
 	}
+}
+
+// dict operation
+
+// create a dict
+func (db *Pickledb) DictCreate(key string) bool {
+	val := newValue(map[string]interface{}{}, "D")
+	db.set(key, val)
+
+	return true
+}
+
+// add a key-value to a dict
+func (db *Pickledb) DictAdd(key string, dictKey string, dictValue interface{}) {
+	value, ok := db.get(key)
+	if !ok {
+		fmt.Printf("%s not exist", key)
+		return
+	}
+	oldDict := value.Data
+	dict, ok := oldDict.(map[string]interface{})
+	if !ok {
+		fmt.Printf("value of %s not a dict", key)
+		return
+	}
+	convertValue := util.Convert(dictValue)
+	dict[dictKey] = convertValue
+	value.Data = dict
+	db.set(key, value)
+
 }
 
 // Think before you act when use this function

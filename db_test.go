@@ -147,7 +147,7 @@ func TestListValue(t *testing.T) {
 
 	arrs := []string{"zl1", "zl2", "zl3"}
 
-	testDB.ListExpend("zpList", arrs)
+	testDB.ListExtend("zpList", arrs)
 
 	l3, ok := testDB.Get("zpList")
 
@@ -169,6 +169,42 @@ func TestListLoad(t *testing.T) {
 	assert.Equal(t, ok, true)
 
 	fmt.Println(l2)
+
+	fmt.Println(testDB)
+}
+
+// go test -v -run TestDictValue
+func TestDictValue(t *testing.T) {
+	testDB := Load("testDict.db", false)
+
+	testDB.DictCreate("zpDict")
+
+	testDB.DictAdd("zpDict", "dict1", 1)
+
+	arr1 := []int{1, 2, 3}
+	testDB.DictAdd("zpDict", "dictarr1", arr1)
+
+	map1 := map[string]string{
+		"dict": "value",
+	}
+
+	testDB.DictAdd("zpDict", "dictmap1", map1)
+
+	value, _ := testDB.Get("zpDict")
+
+	testDB.Dump()
+
+	fmt.Printf("%v", value)
+}
+
+// go test -v -run TestDictLoad
+func TestDictLoad(t *testing.T) {
+	testDB := Load("testDict.db", false)
+
+	value, ok := testDB.Get("zpDict")
+	assert.Equal(t, ok, true)
+
+	fmt.Println(value)
 
 	fmt.Println(testDB)
 }
