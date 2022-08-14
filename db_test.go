@@ -197,6 +197,13 @@ func TestDictValue(t *testing.T) {
 	fmt.Printf("%v", value)
 }
 
+// go test -v -run TestDictDelete
+func TestDictDelete(t *testing.T) {
+	testDB := Load("testDict.db", false)
+	testDB.DictDelete("zpDict", "dictmap1")
+	testDB.Dump()
+}
+
 // go test -v -run TestDictLoad
 func TestDictLoad(t *testing.T) {
 	testDB := Load("testDict.db", false)

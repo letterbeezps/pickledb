@@ -152,6 +152,21 @@ func (db *Pickledb) DictAdd(key string, dictKey string, dictValue interface{}) {
 
 }
 
+func (db *Pickledb) DictDelete(key, dictKey string) {
+	value, ok := db.get(key)
+	if !ok {
+		fmt.Printf("%s not exist", key)
+		return
+	}
+	oldDict := value.Data
+	dict, ok := oldDict.(map[string]interface{})
+	if !ok {
+		fmt.Printf("value of %s not a dict", key)
+		return
+	}
+	delete(dict, dictKey)
+}
+
 // Think before you act when use this function
 func (db *Pickledb) AutoDumpByTime() {
 	go func() {
